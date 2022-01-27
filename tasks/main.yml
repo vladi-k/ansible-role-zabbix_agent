@@ -1,0 +1,24 @@
+---
+- name: Install zabbix-agent packages
+  ansible.builtin.package:
+    name: "{{ zabbix_agent_packages }}"
+
+- name: Tune zabbix_agentd.conf
+  community.general.ini_file:
+    path: /etc/zabbix/zabbix_agentd.conf
+    section: null
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: true
+    owner: root
+    group: root
+    mode: '0444'
+  loop: "{{ zabbix_agent_config }}"
+  notify:
+    - restart zabbix-agent
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: zabbix-agent
+    state: started
+    enabled: true
