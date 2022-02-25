@@ -1,5 +1,9 @@
 ---
 zabbix_agent_packages:
-  - zabbix-agent
+  - zabbix-agent2
 
+zabbix_agent_config_path: /etc/zabbix/zabbix_agent2.conf
+zabbix_agent_config_d_path: /etc/zabbix/zabbix_agent2.d
 zabbix_agent_config: []
+zabbix_agent_custom_configs: []
+zabbix_agent_service_name: zabbix-agent2
