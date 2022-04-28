@@ -2,6 +2,8 @@
 - name: Install zabbix agent packages
   ansible.builtin.package:
     name: "{{ zabbix_agent_packages }}"
+  tags:
+    - zabbix_agent_packages
 
 - name: Tune {{ zabbix_agent_config_path }}
   community.general.ini_file:
@@ -16,6 +18,8 @@
   loop: "{{ zabbix_agent_config }}"
   notify:
     - restart zabbix-agent
+  tags:
+    - zabbix_agent_config
 
 - name: Copy custom configs
   ansible.builtin.copy:
@@ -27,6 +31,34 @@
   loop: "{{ zabbix_agent_custom_configs }}"
   notify:
     - restart zabbix-agent
+  tags:
+    - zabbix_agent_custom_configs
+
+- name: Create custom directories
+  ansible.builtin.file:
+    dest: "{{ item.dest | dirname }}"
+    state: directory
+    owner: "{{ item.dir_owner | default(omit) }}"
+    group: "{{ item.dir_group | default(omit) }}"
+    mode: "{{ item.dir_mode | default(omit) }}"
+  loop: "{{ zabbix_agent_custom_files }}"
+  no_log: true
+  tags:
+    - zabbix_agent_custom_files
+
+- name: Copy custom files
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    content: "{{ item.content }}"
+    owner: "{{ item.owner | default(omit) }}"
+    group: "{{ item.group | default(omit) }}"
+    mode: "{{ item.mode | default(omit) }}"
+  loop: "{{ zabbix_agent_custom_files }}"
+  no_log: true
+  notify:
+    - restart zabbix-agent
+  tags:
+    - zabbix_agent_custom_files
 
 - name: Start and enable service
   ansible.builtin.service:

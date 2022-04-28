@@ -25,6 +25,16 @@ zabbix_agent_config:
 ```
 
 * `zabbix_agent_service_name` - name of zabbix agent service
+* `zabbix_agent_custom_files` - list of custom files to copy, example:
+
+```yaml
+zabbix_agent_custom_files"
+  - dest: /etc/zabbix/tls/zabbix.key
+    content: "{{ lookup('file', inventory_dir+'/../files/zabbix.key') }}"
+    owner: zabbix
+    group: zabbix
+    mode: "0400"
+```
 
 Dependencies
 ------------
